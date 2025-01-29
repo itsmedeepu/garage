@@ -53,7 +53,12 @@ const Register = async (req, res) => {
     password: hashedpassword,
     id,
   });
-  res.status(201).json(User);
+  return res.status(201).json({
+    message: "user created sucessfully",
+    data: {
+      user: User,
+    },
+  });
 };
 
 const FetchAllUsers = async (req, res) => {
@@ -216,6 +221,14 @@ const DeleteUser = async (req, res) => {
   return res.status(200).json({ message: "user delted sucessfully" });
 };
 
+const OauthRegister = async (req, res) => {
+  return res.json({
+    user: req.user.user,
+    accesstoken: req.user.accesstoken,
+    refreshtoken: req.user.refreshtoken,
+  });
+};
+
 module.exports = {
   Register,
   FetchAllUsers,
@@ -225,4 +238,5 @@ module.exports = {
   Refresh,
   verifyUser,
   DeleteUser,
+  OauthRegister,
 };
