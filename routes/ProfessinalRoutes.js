@@ -8,12 +8,12 @@ const {
   Refresh,
   verifyProf,
 } = require("../controllers/ProfessionalController");
-const { ProfessinalAuth } = require("../middlewares/Auth");
+const { ProfessinalAuth, AdminAuth } = require("../middlewares/Auth");
 
 const router = express.Router();
 
 router.post("/register", ProfessRegister);
-router.get("/getall", FetchAllProfessinals);
+router.get("/getall", [AdminAuth], FetchAllProfessinals);
 router.post("/login", ProfessinalLogin);
 router.post("/update", UpdateProfessinal);
 router.get("/getprof/:professinalid", GetProfById);

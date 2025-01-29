@@ -9,15 +9,20 @@ const {
   getBookingsByuserid,
   getBookingsByprofessinalid,
 } = require("../controllers/BookingServiceController");
+const { ProfessinalAuth, AdminAuth, UserAuth } = require("../middlewares/Auth");
 
 const router = express.Router();
-router.get("/allbookings", getAllBookings);
-router.post("/addbooking", addBooking);
-router.post("/acceptbooking", ProfessinalAcceptService);
-router.post("/changestatus", ChangeStatus);
-router.post("/changepaymentstatus", ChangePaymentStatus);
+router.get("/allbookings", [AdminAuth], getAllBookings);
+router.post("/addbooking", [UserAuth], addBooking);
+router.post("/acceptbooking", [ProfessinalAuth], ProfessinalAcceptService);
+router.post("/changestatus", [ProfessinalAuth], ChangeStatus);
+router.post("/changepaymentstatus", [UserAuth], ChangePaymentStatus);
 router.get("/bookingbyid/:bookingid", getBookingsById);
 router.get("/bookingbyuserid/:userid", getBookingsByuserid);
-router.get("/bookingbyproid/:professinailid", getBookingsByprofessinalid);
+router.get(
+  "/bookingbyproid/:professinailid",
+  [ProfessinalAuth],
+  getBookingsByprofessinalid
+);
 
 module.exports = router;
