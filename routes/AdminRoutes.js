@@ -8,10 +8,11 @@ const {
   Refresh,
   verifyAdmin,
 } = require("../controllers/AdminController");
+const { getAllBookings } = require("../controllers/BookingServiceController");
 const { AdminAuth } = require("../middlewares/Auth");
 
 const router = express.Router();
-
+router.get("/allbookings", [AdminAuth], getAllBookings);
 router.post("/register", Register);
 router.get("/alladmins", [AdminAuth], FetchAllAdmins);
 router.post("/login", AdminLogin);

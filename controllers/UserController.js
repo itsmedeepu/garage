@@ -222,7 +222,7 @@ const DeleteUser = async (req, res) => {
 };
 
 const OauthRegister = async (req, res) => {
-  return res.json({
+  return res.status(200).json({
     user: req.user.user,
     accesstoken: req.user.accesstoken,
     refreshtoken: req.user.refreshtoken,

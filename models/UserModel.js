@@ -18,6 +18,7 @@ const UserModel = sequelize.define("User", {
   },
   phone: {
     type: DataTypes.STRING,
+    allowNull: true,
     unique: true,
   },
   password: {
