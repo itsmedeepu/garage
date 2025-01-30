@@ -7,7 +7,7 @@ const addBooking = async (req, res) => {
 
   if (!serviceId || !userId) {
     return res
-      .status(400)
+      .status(401)
       .json({ message: "Please provide all necessary details" });
   }
 
@@ -32,7 +32,7 @@ const ProfessinalAcceptService = async (req, res) => {
 
   if (!professinailid) {
     return res
-      .status(409)
+      .status(401)
       .json({ message: "professinal details are required" });
   }
   const findBookingById = await BookingServiceModel.findOne({
@@ -42,7 +42,7 @@ const ProfessinalAcceptService = async (req, res) => {
   });
 
   if (!findBookingById) {
-    return res.status(409).json({ message: "bookings not found with this id" });
+    return res.status(404).json({ message: "bookings not found with this id" });
   }
   const update = await findBookingById.update(
     {
@@ -60,7 +60,7 @@ const ProfessinalAcceptService = async (req, res) => {
 const ChangeStatus = async (req, res) => {
   const { professinailid, bookingid, status } = req.body;
   if (!professinailid || !status) {
-    return res.status(409).json({ message: "please provide professinal id" });
+    return res.status(401).json({ message: "please provide professinal id" });
   }
 
   const changeStatus = await BookingServiceModel.findOne({
@@ -71,7 +71,7 @@ const ChangeStatus = async (req, res) => {
   });
 
   if (!changeStatus) {
-    return res.status(409).json({ message: "no bookings found" });
+    return res.status(404).json({ message: "no bookings found" });
   }
 
   const updatestatus = await changeStatus.update(
@@ -93,7 +93,7 @@ const ChangeStatus = async (req, res) => {
 const ChangePaymentStatus = async (req, res) => {
   const { userId, bookingid, paymentstatus } = req.body;
   if (!userId || !paymentstatus) {
-    return res.status(409).json({ message: "please provide user id" });
+    return res.status(401).json({ message: "please provide user id" });
   }
 
   const changeStatus = await BookingServiceModel.findOne({
@@ -104,7 +104,7 @@ const ChangePaymentStatus = async (req, res) => {
   });
 
   if (!changeStatus) {
-    return res.status(409).json({ message: "no bookings found" });
+    return res.status(404).json({ message: "no bookings found" });
   }
 
   const updatestatus = await changeStatus.update(
@@ -137,7 +137,7 @@ const getBookingsById = async (req, res) => {
   const { bookingid } = req.params;
 
   if (!bookingid) {
-    return res.status(409).json({ message: "provide booking id" });
+    return res.status(401).json({ message: "provide booking id" });
   }
   const booking = await BookingServiceModel.findOne({
     where: {
@@ -145,7 +145,7 @@ const getBookingsById = async (req, res) => {
     },
   });
   if (!booking) {
-    return res.status(409).json({ message: "no booking founds" });
+    return res.status(404).json({ message: "no booking founds" });
   }
 
   return res
@@ -157,7 +157,7 @@ const getBookingsByuserid = async (req, res) => {
   const { userid } = req.params;
 
   if (!userid) {
-    return res.status(409).json({ message: "provide booking id" });
+    return res.status(401).json({ message: "provide booking id" });
   }
   const booking = await BookingServiceModel.findOne({
     where: {
@@ -165,7 +165,7 @@ const getBookingsByuserid = async (req, res) => {
     },
   });
   if (!booking) {
-    return res.status(409).json({ message: "no booking founds" });
+    return res.status(404).json({ message: "no booking founds" });
   }
 
   return res
@@ -177,7 +177,7 @@ const getBookingsByprofessinalid = async (req, res) => {
   const { professinailid } = req.params;
 
   if (!professinailid) {
-    return res.status(409).json({ message: "provide booking id" });
+    return res.status(401).json({ message: "provide booking id" });
   }
   const booking = await BookingServiceModel.findOne({
     where: {
@@ -185,7 +185,7 @@ const getBookingsByprofessinalid = async (req, res) => {
     },
   });
   if (!booking) {
-    return res.status(409).json({ message: "no booking founds" });
+    return res.status(404).json({ message: "no booking founds" });
   }
 
   return res
