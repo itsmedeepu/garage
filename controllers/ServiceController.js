@@ -7,7 +7,7 @@ const addService = async (req, res) => {
   const { name, description, price } = req.body;
 
   if (!isValidText(name) || !isValidText(description)) {
-    return res.status(409).json({ message: "all feilds are required" });
+    return res.status(401).json({ message: "all feilds are required" });
   }
 
   const id = generateUniquiId();
@@ -28,7 +28,7 @@ const updateServices = async (req, res) => {
   const { id } = req.body;
   if (!id) {
     return res
-      .status(409)
+      .status(401)
       .json({ message: "please provide service id to update" });
   }
 
@@ -44,7 +44,7 @@ const deleteService = async (req, res) => {
   const { id } = req.body;
   if (!id) {
     return res
-      .status(409)
+      .status(401)
       .json({ message: "please provide service id to update" });
   }
 

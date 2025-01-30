@@ -17,7 +17,7 @@ const ProfessRegister = async (req, res) => {
     !isValidText(name) ||
     !isValidText(phone)
   ) {
-    return res.status(409).json({ message: "all feilds are required" });
+    return res.status(401).json({ message: "all feilds are required" });
   }
 
   const Professinal = await ProfessinalModel.findOne({
@@ -57,7 +57,7 @@ const ProfessinalLogin = async (req, res) => {
   const { email, password } = req.body;
 
   if (!isValidText(email) || !isValidText(password)) {
-    return res.status(409).json({ message: "all feilds are required" });
+    return res.status(401).json({ message: "all feilds are required" });
   }
 
   const findProfessinal = await ProfessinalModel.findOne({ where: { email } });
@@ -99,7 +99,7 @@ const ProfessinalLogin = async (req, res) => {
 
 const UpdateProfessinal = async (req, res) => {
   if (!req.body) {
-    return res.status(409).json({ message: "updtaing feilds are required" });
+    return res.status(401).json({ message: "updtaing feilds are required" });
   }
 
   // if (!isValidObject(req.body)) {
@@ -111,7 +111,7 @@ const UpdateProfessinal = async (req, res) => {
   const findProfessinal = await ProfessinalModel.findOne({ where: { id } });
 
   if (!findProfessinal) {
-    return res.status(409).json({ message: "no user found with this id" });
+    return res.status(404).json({ message: "no user found with this id" });
   }
   const updateProfessinal = await findProfessinal.update(req.body, {
     where: {
@@ -127,7 +127,7 @@ const UpdateProfessinal = async (req, res) => {
 const GetProfById = async (req, res) => {
   const { professinalid } = req.params;
   if (!professinalid) {
-    return res.status(409).json({ message: "please provide user id " });
+    return res.status(401).json({ message: "please provide user id " });
   }
 
   const professianl = await ProfessinalModel.findOne({
@@ -137,7 +137,7 @@ const GetProfById = async (req, res) => {
   });
 
   if (!professianl) {
-    return res.status(409).json({ message: "profesinal not found" });
+    return res.status(404).json({ message: "profesinal not found" });
   }
 
   return res

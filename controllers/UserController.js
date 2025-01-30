@@ -19,15 +19,15 @@ const Register = async (req, res) => {
     !isValidText(password) ||
     !isValidText(phone)
   ) {
-    return res.status(403, "please provide all details");
+    return res.status(401, "please provide all details");
   }
 
   if (!isValidEmail(email)) {
-    return res.status(409, "please provide valid email id");
+    return res.status(401, "please provide valid email id");
   }
 
   if (!isValidPassword(password)) {
-    return res.status(409, "please provide valid password");
+    return res.status(401, "please provide valid password");
   }
 
   const user = await UserModel.findOne({
@@ -72,7 +72,7 @@ const UserLogin = async (req, res) => {
   const { email, password } = req.body;
 
   if (!isValidText(email) || !isValidText(password)) {
-    return res.status(409).json({ message: "all feilds are required" });
+    return res.status(401).json({ message: "all feilds are required" });
   }
 
   const finduser = await UserModel.findOne({ where: { email } });
@@ -111,7 +111,7 @@ const UserLogin = async (req, res) => {
 
 const UpdateUser = async (req, res) => {
   if (!req.body) {
-    return res.status(409).json({ message: "updtaing feilds are required" });
+    return res.status(401).json({ message: "updtaing feilds are required" });
   }
 
   // if (!isValidObject(req.body)) {
@@ -123,7 +123,7 @@ const UpdateUser = async (req, res) => {
   const findUser = await UserModel.findOne({ where: { id } });
 
   if (!findUser) {
-    return res.status(409).json({ message: "no user found with this id" });
+    return res.status(404).json({ message: "no user found with this id" });
   }
   const updatedUser = await findUser.update(req.body, {
     where: {
@@ -138,7 +138,7 @@ const UpdateUser = async (req, res) => {
 const GetUserById = async (req, res) => {
   const { userid } = req.params;
   if (!userid) {
-    return res.status(409).json({ message: "please provide user id " });
+    return res.status(401).json({ message: "please provide user id " });
   }
 
   const user = await UserModel.findOne({
@@ -148,7 +148,7 @@ const GetUserById = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(409).json({ message: "user not found" });
+    return res.status(404).json({ message: "user not found" });
   }
 
   return res

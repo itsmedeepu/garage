@@ -25,12 +25,12 @@ router.post("/refresh", [UserAuth], Refresh);
 router.post("/auth", [UserAuth], verifyUser);
 router.delete("/delete", [AdminAuth], DeleteUser);
 router.get(
-  "/oauth2/google",
+  "/oauth2/google/sigin",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 router.get(
-  "/api/v1/garage/oauth2/google/callback",
+  "/oauth2/google/callback",
   passport.authenticate("google", {
     session: false,
     failureRedirect: "/failed",

@@ -18,7 +18,7 @@ const Register = async (req, res) => {
     !isValidText(password) ||
     !isValidText(phone)
   ) {
-    return res.status(403, "please provide all details");
+    return res.status(401, "please provide all details");
   }
   const admin = await AdminModel.findOne({
     where: {
@@ -60,7 +60,7 @@ const AdminLogin = async (req, res) => {
   console.log(req.body);
 
   if (!isValidText(email) || !isValidText(password)) {
-    return res.status(409).json({ message: "all feilds are required" });
+    return res.status(401).json({ message: "all feilds are required" });
   }
 
   const findadmin = await AdminModel.findOne({ where: { email } });
@@ -88,7 +88,7 @@ const AdminLogin = async (req, res) => {
     }
   );
 
-  return res.status(200).json({
+  return res.status(201).json({
     message: "admin  login sucessfull",
     data: {
       accesstoken,
@@ -99,7 +99,7 @@ const AdminLogin = async (req, res) => {
 
 const UpdateAdmin = async (req, res) => {
   if (!req.body) {
-    return res.status(409).json({ message: "updtaing feilds are required" });
+    return res.status(401).json({ message: "updtaing feilds are required" });
   }
 
   // if (!isValidObject(req.body)) {
@@ -111,7 +111,7 @@ const UpdateAdmin = async (req, res) => {
   const findAdmin = await AdminModel.findOne({ where: { id } });
 
   if (!findAdmin) {
-    return res.status(409).json({ message: "no admin found with this id" });
+    return res.status(404).json({ message: "no admin found with this id" });
   }
   const updatedAdmin = await findAdmin.update(req.body, {
     where: {
@@ -126,13 +126,13 @@ const UpdateAdmin = async (req, res) => {
 const GetAdminById = async (req, res) => {
   const { adminid } = req.params;
   if (!adminid) {
-    return res.status(409).json({ message: "admin not found with this id " });
+    return res.status(404).json({ message: "admin not found with this id " });
   }
 
   const admin = await AdminModel.findByPk(adminid);
 
   if (!admin) {
-    return res.status(409).json({ message: "admin not found" });
+    return res.status(404).json({ message: "admin not found" });
   }
 
   return res
