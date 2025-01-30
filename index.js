@@ -28,29 +28,9 @@ app.listen(3000, () => {
   sequelize.sync({ force: false });
 });
 
-app.get(
-  "/api/v1/garage/oauth2/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-app.get(
-  "/api/v1/garage/oauth2/google/callback",
-  passport.authenticate("google", {
-    session: false,
-    failureRedirect: "/failed",
-  }),
-  (req, res) => {
-    // Send tokens to client
-    return res.json({
-      user: req.user.user,
-      accesstoken: req.user.accesstoken,
-      refreshtoken: req.user.refreshtoken,
-    });
-  }
-);
-
+//for testing google oauth2
 app.get("/failed", (req, res) => {
-  return res.status(400).json({ message: "faile to authenticate" });
+  return res.status(400).json({ message: "failed to authenticate" });
 });
 
 app.use((err, req, res, next) => {
