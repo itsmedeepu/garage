@@ -4,7 +4,6 @@ const {
   ProfessinalAcceptService,
   ChangeStatus,
   ChangePaymentStatus,
-  getAllBookings,
   getBookingsById,
   getBookingsByuserid,
   getBookingsByprofessinalid,
@@ -12,7 +11,6 @@ const {
 const { ProfessinalAuth, AdminAuth, UserAuth } = require("../middlewares/Auth");
 
 const router = express.Router();
-router.get("/allbookings", [AdminAuth], getAllBookings);
 router.post("/addbooking", [UserAuth], addBooking);
 router.post("/acceptbooking", [ProfessinalAuth], ProfessinalAcceptService);
 router.post("/changestatus", [ProfessinalAuth], ChangeStatus);

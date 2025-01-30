@@ -31,7 +31,6 @@ passport.use(
             id,
             password: hashpassword,
             name: profile.displayName,
-            phone: generateUniquiId(),
           };
 
           const saveuser = await UserModel.create(user);

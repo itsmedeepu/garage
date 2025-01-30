@@ -49,7 +49,7 @@ const ProfessinalAuth = async (req, res, next) => {
       .json({ message: "access denied access token not found" });
   }
 
-  jwt.verify(token, process.env.USER_PRIVATE_KEY, (err, decoded) => {
+  jwt.verify(token, process.env.PROFESINAL_PRIVATE_KEY, (err, decoded) => {
     if (err) {
       return res
         .status(401)

@@ -10,8 +10,10 @@ const {
 } = require("../controllers/ProfessionalController");
 const { ProfessinalAuth, AdminAuth } = require("../middlewares/Auth");
 
-const router = express.Router();
+const { getAllBookings } = require("../controllers/BookingServiceController");
 
+const router = express.Router();
+router.get("/allbookings", [ProfessinalAuth], getAllBookings);
 router.post("/register", ProfessRegister);
 router.get("/getall", [AdminAuth], FetchAllProfessinals);
 router.post("/login", ProfessinalLogin);
