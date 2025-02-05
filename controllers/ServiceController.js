@@ -19,9 +19,11 @@ const addService = async (req, res) => {
 
 const getAllServices = async (req, res) => {
   const services = await ServiceModel.findAll();
-  return res
-    .status(200)
-    .json({ message: "all services fetched sucessfully", data: services });
+
+  return res.status(200).json({
+    message: "all services fetched sucessfully",
+    data: { services },
+  });
 };
 
 const updateServices = async (req, res) => {

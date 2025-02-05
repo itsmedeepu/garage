@@ -15,14 +15,12 @@ const isValidPassword = (data) => {
   return passwordRegex.test(data);
 };
 
-const isValidObject = (data) => {
-  console.log(data);
-  data.forEach((element) => {
-    if (!isValidText(data([element]))) {
-      return false;
-    }
-  });
-  return true;
+const isValidObject = (obj) => {
+  if (!obj || typeof obj !== "object") return false;
+
+  return Object.values(obj).every(
+    (value) => value !== null && value !== undefined && value !== ""
+  );
 };
 
 module.exports = { isValidText, isValidEmail, isValidPassword, isValidObject };

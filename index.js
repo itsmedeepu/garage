@@ -1,6 +1,7 @@
 const express = require("express");
 const sequelize = require("./database/conn");
 const passport = require("passport");
+const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -8,7 +9,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(passport.initialize());
-
+app.use(cors());
 const userRoutes = require("./routes/UserRoutes");
 const professinalRoutes = require("./routes/ProfessinalRoutes");
 const serviceRoutes = require("./routes/ServiceRoutes");
@@ -37,6 +38,7 @@ app.use((err, req, res, next) => {
   console.log(err.stack);
   return res.status(500).json({
     status: "error",
+    statusCode: 500,
     message: err.message || "Internal Server Error",
   });
 });

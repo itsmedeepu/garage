@@ -3,22 +3,37 @@ const BookingServiceModel = require("../models/BookingServiceModel");
 const { where } = require("sequelize");
 
 const addBooking = async (req, res) => {
-  const { serviceId, userId } = req.body;
+  const { serviceId, userId, date, latitude, longitude } = req.body;
 
   if (!serviceId || !userId) {
     return res
-      .status(401)
+      .status(404)
+      .json({ message: "Please provide all necessary details" });
+  }
+
+  if (!latitude || !longitude) {
+    return res
+      .status(404)
+      .json({ message: "Please provide all necessary details" });
+  }
+  if (!date) {
+    return res
+      .status(404)
       .json({ message: "Please provide all necessary details" });
   }
 
   const id = generateUniquiId();
-  const service_date = new Date(); // Corrected
+  const service_date = date; // Corrected
 
   const newBooking = await BookingServiceModel.create({
     id,
     service_date, // Use the correct field
     serviceId, // Use the correct foreign key name
-    userId, // Use the correct foreign key name
+    userId,
+    latitude,
+    longitude,
+
+    // Use the correct foreign key name
   });
 
   return res.status(201).json({
@@ -28,9 +43,11 @@ const addBooking = async (req, res) => {
 };
 
 const ProfessinalAcceptService = async (req, res) => {
-  const { professinailid, bookingid } = req.body;
+  const { professinalid, bookingid } = req.body;
 
-  if (!professinailid) {
+  const status = "Accepted";
+
+  if (!professinalid) {
     return res
       .status(401)
       .json({ message: "professinal details are required" });
@@ -46,7 +63,8 @@ const ProfessinalAcceptService = async (req, res) => {
   }
   const update = await findBookingById.update(
     {
-      professionalId: professinailid,
+      professionalId: professinalid,
+      status,
     },
     {
       where: {
@@ -54,21 +72,27 @@ const ProfessinalAcceptService = async (req, res) => {
       },
     }
   );
+
+  if (!update) {
+    return res.status(500).json({ message: "booking not mapped" });
+  }
   return res.status(201).json({ message: "professinal mapped to booking " });
 };
 
 const ChangeStatus = async (req, res) => {
-  const { professinailid, bookingid, status } = req.body;
-  if (!professinailid || !status) {
+  const { professinalid, bookingid, status } = req.body;
+  if (!professinalid || !status) {
     return res.status(401).json({ message: "please provide professinal id" });
   }
 
   const changeStatus = await BookingServiceModel.findOne({
     where: {
       id: bookingid,
-      professionalId: professinailid,
+      professionalId: professinalid,
     },
   });
+
+  console.log(changeStatus);
 
   if (!changeStatus) {
     return res.status(404).json({ message: "no bookings found" });
@@ -79,7 +103,7 @@ const ChangeStatus = async (req, res) => {
     {
       where: {
         id: bookingid,
-        professionalId: professinailid,
+        professionalId: professinalid,
       },
     }
   );
@@ -125,6 +149,7 @@ const ChangePaymentStatus = async (req, res) => {
 
 const getAllBookings = async (req, res) => {
   const allboookings = await BookingServiceModel.findAll();
+
   return res.status(200).json({
     message: "all bookings fetched sucessfully",
     data: {
@@ -139,7 +164,7 @@ const getBookingsById = async (req, res) => {
   if (!bookingid) {
     return res.status(401).json({ message: "provide booking id" });
   }
-  const booking = await BookingServiceModel.findOne({
+  const booking = await BookingServiceModel.findAll({
     where: {
       id: bookingid,
     },
@@ -148,9 +173,7 @@ const getBookingsById = async (req, res) => {
     return res.status(404).json({ message: "no booking founds" });
   }
 
-  return res
-    .status(200)
-    .json({ message: "booking found", data: { booking: booking } });
+  return res.status(200).json({ message: "booking found", data: booking });
 };
 
 const getBookingsByuserid = async (req, res) => {
@@ -159,18 +182,16 @@ const getBookingsByuserid = async (req, res) => {
   if (!userid) {
     return res.status(401).json({ message: "provide booking id" });
   }
-  const booking = await BookingServiceModel.findOne({
+  const booking = await BookingServiceModel.findAll({
     where: {
       userId: userid,
     },
   });
-  if (!booking) {
-    return res.status(404).json({ message: "no booking founds" });
-  }
 
-  return res
-    .status(200)
-    .json({ message: "booking found", data: { booking: booking } });
+  return res.status(200).json({
+    message: "booking found",
+    data: { booking: booking },
+  });
 };
 
 const getBookingsByprofessinalid = async (req, res) => {
@@ -179,7 +200,7 @@ const getBookingsByprofessinalid = async (req, res) => {
   if (!professinailid) {
     return res.status(401).json({ message: "provide booking id" });
   }
-  const booking = await BookingServiceModel.findOne({
+  const booking = await BookingServiceModel.findAll({
     where: {
       professionalId: professinailid,
     },
@@ -188,9 +209,10 @@ const getBookingsByprofessinalid = async (req, res) => {
     return res.status(404).json({ message: "no booking founds" });
   }
 
-  return res
-    .status(200)
-    .json({ message: "booking found", data: { booking: booking } });
+  return res.status(200).json({
+    message: "booking found",
+    data: { booking: booking },
+  });
 };
 
 module.exports = {

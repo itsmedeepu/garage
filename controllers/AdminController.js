@@ -12,13 +12,25 @@ const AdminModel = require("../models/AdminModel");
 
 const Register = async (req, res) => {
   const { name, email, password, phone } = req.body;
-  if (
-    !isValidText(name) ||
-    !isValidText(email) ||
-    !isValidText(password) ||
-    !isValidText(phone)
-  ) {
-    return res.status(401, "please provide all details");
+  if (!name || name.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "name feild is required", statusCode: 404 });
+  }
+  if (!email || email.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "email feild is required", statusCode: 404 });
+  }
+  if (!phone || phone.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "phone feild is required", statusCode: 404 });
+  }
+  if (!password || password.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "password feild is required", statusCode: 404 });
   }
   const admin = await AdminModel.findOne({
     where: {
@@ -28,9 +40,10 @@ const Register = async (req, res) => {
   });
 
   if (admin) {
-    return res
-      .status(409)
-      .json({ message: "admin already exist with this details" });
+    return res.status(409).json({
+      message: "admin already exist with this details",
+      statusCode: 409,
+    });
   }
 
   const id = generateUniquiId();
@@ -43,9 +56,11 @@ const Register = async (req, res) => {
     password: hashedpassword,
     id,
   });
-  return res
-    .status(201)
-    .json({ message: "admin registred sucessfully", data: Admin });
+  return res.status(200).json({
+    message: "admin registred sucessfully",
+    statusCode: 200,
+    data: Admin,
+  });
 };
 
 const FetchAllAdmins = async (req, res) => {
@@ -57,23 +72,32 @@ const FetchAllAdmins = async (req, res) => {
 
 const AdminLogin = async (req, res) => {
   const { email, password } = req.body;
-  console.log(req.body);
 
   if (!isValidText(email) || !isValidText(password)) {
-    return res.status(401).json({ message: "all feilds are required" });
+    return res
+      .status(401)
+      .json({ message: "all feilds are required", statusCode: 401 });
   }
 
   const findadmin = await AdminModel.findOne({ where: { email } });
   if (!findadmin) {
-    return res.status(401).json({ message: "invalid login details" });
+    return res
+      .status(401)
+      .json({ message: "invalid login details", statusCode: 401 });
   }
 
   const verifyadminPass = await bcrypt.compare(password, findadmin.password);
 
+  if (!verifyadminPass) {
+    return res
+      .status(401)
+      .json({ message: "invalid login details", statusCode: 401 });
+  }
+
   //create tokens
 
   const accesstoken = jwt.sign(
-    { userid: findadmin.id },
+    { adminid: findadmin.id },
     process.env.ADMIN_PRIVATE_KEY,
     {
       expiresIn: "5m",
@@ -81,18 +105,20 @@ const AdminLogin = async (req, res) => {
   );
 
   const refreshtoken = jwt.sign(
-    { userid: findadmin.id },
-    process.env.USER_PRIVATE_KEY,
+    { adminid: findadmin.id },
+    process.env.ADMIN_PRIVATE_KEY,
     {
       expiresIn: "1d",
     }
   );
 
-  return res.status(201).json({
+  return res.status(200).json({
     message: "admin  login sucessfull",
+    statusCode: 200,
     data: {
       accesstoken,
       refreshtoken,
+      adminid: findadmin.id,
     },
   });
 };
@@ -151,12 +177,12 @@ const Refresh = async (req, res) => {
     }
 
     const accesstoken = jwt.sign(
-      { userid: decoded.userid },
+      { adminid: decoded.adminid },
       process.env.ADMIN_PRIVATE_KEY,
       { expiresIn: "5m" }
     );
     const refreshtoken = jwt.sign(
-      { userid: decoded.userid },
+      { adminid: decoded.adminid },
       process.env.ADMIN_PRIVATE_KEY,
       { expiresIn: "1d" }
     );
@@ -180,7 +206,7 @@ const verifyAdmin = async (req, res) => {
         return res.status(401).json({ message: "access token expired " });
       }
 
-      const admin = await AdminModel.findByPk(decoded.professianlid);
+      const admin = await AdminModel.findByPk(decoded.adminid);
 
       return res.status(200).json({
         message: "admin verify sucessfully",

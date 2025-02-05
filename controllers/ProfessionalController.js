@@ -11,13 +11,25 @@ const jwt = require("jsonwebtoken");
 const { where } = require("sequelize");
 const ProfessRegister = async (req, res) => {
   const { name, email, password, phone } = req.body;
-  if (
-    !isValidText(email) ||
-    !isValidText(password) ||
-    !isValidText(name) ||
-    !isValidText(phone)
-  ) {
-    return res.status(401).json({ message: "all feilds are required" });
+  if (!name || name.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "name feild is required", statusCode: 404 });
+  }
+  if (!email || email.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "email feild is required", statusCode: 404 });
+  }
+  if (!phone || phone.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "phone feild is required", statusCode: 404 });
+  }
+  if (!password || password.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "password feild is required", statusCode: 404 });
   }
 
   const Professinal = await ProfessinalModel.findOne({
@@ -43,7 +55,9 @@ const ProfessRegister = async (req, res) => {
     password: hashedpassword,
     id,
   });
-  return res.status(201).json(Professinalsave);
+  return res
+    .status(201)
+    .json({ message: "professional registred sucessfully", statusCode: 201 });
 };
 
 const FetchAllProfessinals = async (req, res) => {
@@ -70,10 +84,16 @@ const ProfessinalLogin = async (req, res) => {
     findProfessinal.password
   );
 
+  if (!verifyProfessianlPassword) {
+    return res
+      .status(401)
+      .json({ message: "invalid login details", statusCode: 401 });
+  }
+
   //create tokens
 
   const accesstoken = jwt.sign(
-    { userid: findProfessinal.id },
+    { professianlid: findProfessinal.id },
     process.env.PROFESINAL_PRIVATE_KEY,
     {
       expiresIn: "5m",
@@ -81,7 +101,7 @@ const ProfessinalLogin = async (req, res) => {
   );
 
   const refreshtoken = jwt.sign(
-    { userid: findProfessinal.id },
+    { professianlid: findProfessinal.id },
     process.env.PROFESINAL_PRIVATE_KEY,
     {
       expiresIn: "1d",
@@ -90,7 +110,9 @@ const ProfessinalLogin = async (req, res) => {
 
   return res.status(200).json({
     message: "professinal login sucessfull",
+    statusCode: 200,
     data: {
+      professinalid: findProfessinal.id,
       accesstoken,
       refreshtoken,
     },
@@ -102,10 +124,9 @@ const UpdateProfessinal = async (req, res) => {
     return res.status(401).json({ message: "updtaing feilds are required" });
   }
 
-  // if (!isValidObject(req.body)) {
-  //   return res.status(409).json({ message: "some feilds are invalid" });
-  // }
-
+  if (!isValidObject(req.body)) {
+    return res.status(401).json({ message: "All feilds are required" });
+  }
   const { id } = req.body;
 
   const findProfessinal = await ProfessinalModel.findOne({ where: { id } });
@@ -140,9 +161,10 @@ const GetProfById = async (req, res) => {
     return res.status(404).json({ message: "profesinal not found" });
   }
 
-  return res
-    .status(200)
-    .json({ message: "user fetched sucessfully", data: { professianl } });
+  return res.status(200).json({
+    message: "user fetched sucessfully",
+    data: { prof: professianl },
+  });
 };
 
 const Refresh = async (req, res) => {
@@ -159,12 +181,12 @@ const Refresh = async (req, res) => {
       }
 
       const accesstoken = jwt.sign(
-        { userid: decoded.userid },
+        { professianlid: decoded.professianlid },
         process.env.PROFESINAL_PRIVATE_KEY,
         { expiresIn: "5m" }
       );
       const refreshtoken = jwt.sign(
-        { userid: decoded.userid },
+        { professianlid: decoded.professianlid },
         process.env.PROFESINAL_PRIVATE_KEY,
         { expiresIn: "1d" }
       );
@@ -188,7 +210,7 @@ const verifyProf = async (req, res) => {
       if (err) {
         return res.status(401).json({ message: "access token expired " });
       }
-
+      console.log(decoded);
       const profesinal = await ProfessinalModel.findByPk(decoded.professianlid);
 
       return res.status(200).json({

@@ -13,34 +13,39 @@ const { where } = require("sequelize");
 const { head } = require("../routes/UserRoutes");
 const Register = async (req, res) => {
   const { name, email, password, phone } = req.body;
-  if (
-    !isValidText(name) ||
-    !isValidText(email) ||
-    !isValidText(password) ||
-    !isValidText(phone)
-  ) {
-    return res.status(401, "please provide all details");
+  if (!name || name.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "name feild is required", statusCode: 404 });
   }
-
-  if (!isValidEmail(email)) {
-    return res.status(401, "please provide valid email id");
+  if (!email || email.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "email feild is required", statusCode: 404 });
   }
-
-  if (!isValidPassword(password)) {
-    return res.status(401, "please provide valid password");
+  if (!phone || phone.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "phone feild is required", statusCode: 404 });
+  }
+  if (!password || password.trim() === "") {
+    return res
+      .status(404)
+      .json({ message: "password feild is required", statusCode: 404 });
   }
 
   const user = await UserModel.findOne({
     where: {
-      phone: phone,
       email: email,
+      phone: phone,
     },
   });
 
   if (user) {
-    return res
-      .status(409)
-      .json({ message: "user already exist with this details" });
+    return res.status(409).json({
+      message: "user already exist with this details",
+      statusCode: 409,
+    });
   }
 
   const id = generateUniquiId();
@@ -55,6 +60,7 @@ const Register = async (req, res) => {
   });
   return res.status(201).json({
     message: "user created sucessfully",
+    statusCode: 201,
     data: {
       user: User,
     },
@@ -72,7 +78,7 @@ const UserLogin = async (req, res) => {
   const { email, password } = req.body;
 
   if (!isValidText(email) || !isValidText(password)) {
-    return res.status(401).json({ message: "all feilds are required" });
+    return res.status(404).json({ message: "all feilds are required" });
   }
 
   const finduser = await UserModel.findOne({ where: { email } });
@@ -81,6 +87,10 @@ const UserLogin = async (req, res) => {
   }
 
   const verifyUserPass = await bcrypt.compare(password, finduser.password);
+
+  if (!verifyUserPass) {
+    return res.status(401).json({ message: "invalid login details" });
+  }
 
   //create tokens
 
@@ -102,9 +112,11 @@ const UserLogin = async (req, res) => {
 
   return res.status(200).json({
     message: "user  login sucessfull",
+
     data: {
       accesstoken,
       refreshtoken,
+      userid: finduser.id,
     },
   });
 };
@@ -114,9 +126,9 @@ const UpdateUser = async (req, res) => {
     return res.status(401).json({ message: "updtaing feilds are required" });
   }
 
-  // if (!isValidObject(req.body)) {
-  //   return res.status(409).json({ message: "some feilds are invalid" });
-  // }
+  if (!isValidObject(req.body)) {
+    return res.status(404).json({ message: "some feilds are invalid" });
+  }
 
   const { id } = req.body;
 
@@ -176,7 +188,7 @@ const Refresh = async (req, res) => {
       process.env.USER_PRIVATE_KEY,
       { expiresIn: "1d" }
     );
-    return res.status(200).json({
+    return res.status(201).json({
       message: "new pair of token created successfully",
       data: { accesstoken, refreshtoken },
     });
@@ -209,24 +221,29 @@ const verifyUser = async (req, res) => {
 const DeleteUser = async (req, res) => {
   const { userid } = req.body;
   if (!userid) {
-    return res.status(409).json({ message: "user id is required" });
+    return res.status(401).json({ message: "user id is required" });
   }
 
   const finduser = await UserModel.findOne({ where: { id: userid } });
   if (!finduser) {
-    return res.status(409).json({ message: "user not found" });
+    return res.status(404).json({ message: "user not found" });
   }
 
   finduser.destroy();
-  return res.status(200).json({ message: "user delted sucessfully" });
+  return res.status(201).json({ message: "user delted sucessfully" });
 };
 
 const OauthRegister = async (req, res) => {
-  return res.status(200).json({
-    user: req.user.user,
-    accesstoken: req.user.accesstoken,
-    refreshtoken: req.user.refreshtoken,
-  });
+  console.log(req.user);
+
+  res.redirect(
+    "http://localhost:5173/garage/user/login/oauth?accesstoken=" +
+      req.user.accesstoken +
+      "&refreshtoken=" +
+      req.user.refreshtoken +
+      "&userid=" +
+      req.user.userid
+  );
 };
 
 module.exports = {

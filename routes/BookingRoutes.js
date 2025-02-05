@@ -15,7 +15,7 @@ router.post("/addbooking", [UserAuth], addBooking);
 router.post("/acceptbooking", [ProfessinalAuth], ProfessinalAcceptService);
 router.post("/changestatus", [ProfessinalAuth], ChangeStatus);
 router.post("/changepaymentstatus", [UserAuth], ChangePaymentStatus);
-router.get("/bookingbyid/:bookingid", getBookingsById);
+router.get("/bookingbyid/:bookingid", [ProfessinalAuth], getBookingsById);
 router.get("/bookingbyuserid/:userid", getBookingsByuserid);
 router.get(
   "/bookingbyproid/:professinailid",

@@ -48,7 +48,11 @@ passport.use(
             { expiresIn: "1d" }
           );
 
-          return callback(null, { user, accesstoken, refreshtoken });
+          return callback(null, {
+            userid: saveuser.id,
+            accesstoken,
+            refreshtoken,
+          });
         }
 
         // Generate tokens
@@ -64,7 +68,7 @@ passport.use(
           { expiresIn: "1d" }
         );
 
-        return callback(null, { user, accesstoken, refreshtoken });
+        return callback(null, { userid: user.id, accesstoken, refreshtoken });
       } catch (error) {
         return callback(error, null);
       }

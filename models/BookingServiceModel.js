@@ -15,7 +15,7 @@ const BookingServiceModel = sequelize.define("Booking", {
     defaultValue: "Pending",
   },
   service_date: {
-    type: DataTypes.DATE,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   payment: {
@@ -33,6 +33,14 @@ const BookingServiceModel = sequelize.define("Booking", {
       model: UserModel, // Refers to the UserModel
       key: "id", // Primary key of the User model
     },
+  },
+  latitude: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  longitude: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   serviceId: {
     type: DataTypes.STRING,
