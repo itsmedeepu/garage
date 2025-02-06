@@ -69,6 +69,7 @@ const Register = async (req, res) => {
 
 const FetchAllUsers = async (req, res) => {
   const users = await User.findAll();
+
   return res
     .status(200)
     .json({ message: "user  fetched sucessfully", data: users });
@@ -127,7 +128,7 @@ const UpdateUser = async (req, res) => {
   }
 
   if (!isValidObject(req.body)) {
-    return res.status(404).json({ message: "some feilds are invalid" });
+    return res.status(401).json({ message: "some feilds are invalid" });
   }
 
   const { id } = req.body;
@@ -142,9 +143,13 @@ const UpdateUser = async (req, res) => {
       id,
     },
   });
-  return res
-    .status(201)
-    .json({ message: "user updated sucessfully", data: { user: updatedUser } });
+
+  setTimeout(() => {
+    return res.status(201).json({
+      message: "user updated sucessfully",
+      data: { user: updatedUser },
+    });
+  }, 4000);
 };
 
 const GetUserById = async (req, res) => {
@@ -219,7 +224,7 @@ const verifyUser = async (req, res) => {
 };
 
 const DeleteUser = async (req, res) => {
-  const { userid } = req.body;
+  const userid = req.params.id;
   if (!userid) {
     return res.status(401).json({ message: "user id is required" });
   }

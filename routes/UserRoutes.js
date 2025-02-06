@@ -25,7 +25,7 @@ router.post("/update", [UserAuth], UpdateUser);
 router.get("/getuserbyid/:userid", [UserAuth], GetUserById);
 router.post("/refresh", [UserAuth], Refresh);
 router.post("/auth", [UserAuth], verifyUser);
-router.delete("/delete", [AdminAuth], DeleteUser);
+router.delete("/delete/:id", [AdminAuth], DeleteUser);
 router.post("/addbooking", [UserAuth], addBooking);
 router.get(
   "/oauth2/google/sigin",

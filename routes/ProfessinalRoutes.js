@@ -31,5 +31,4 @@ router.post("/auth", [ProfessinalAuth], verifyProf);
 router.get("/allusers", [ProfessinalAuth], FetchAllUsers);
 router.get("/bookingbyid/:bookingid", [ProfessinalAuth], getBookingsById);
 router.post("/changestatus", [ProfessinalAuth], ChangeStatus);
-
 module.exports = router;

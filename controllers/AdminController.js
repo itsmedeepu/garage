@@ -128,9 +128,9 @@ const UpdateAdmin = async (req, res) => {
     return res.status(401).json({ message: "updtaing feilds are required" });
   }
 
-  // if (!isValidObject(req.body)) {
-  //   return res.status(409).json({ message: "some feilds are invalid" });
-  // }
+  if (!isValidObject(req.body)) {
+    return res.status(401).json({ message: "updtaing feilds are required" });
+  }
 
   const { id } = req.body;
 
@@ -163,7 +163,7 @@ const GetAdminById = async (req, res) => {
 
   return res
     .status(200)
-    .json({ message: "user fetched sucessfully", data: { admin } });
+    .json({ message: "admin fetched sucessfully", data: { admin } });
 };
 
 const Refresh = async (req, res) => {

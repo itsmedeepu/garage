@@ -61,10 +61,20 @@ const BookingServiceModel = sequelize.define("Booking", {
 });
 
 // Define associations
-BookingServiceModel.belongsTo(UserModel, { foreignKey: "userId" });
-BookingServiceModel.belongsTo(ServiceModel, { foreignKey: "serviceId" });
+BookingServiceModel.belongsTo(UserModel, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  hooks: true,
+});
+BookingServiceModel.belongsTo(ServiceModel, {
+  foreignKey: "serviceId",
+  onDelete: "CASCADE",
+  hooks: true,
+});
 BookingServiceModel.belongsTo(ProfessionalModel, {
   foreignKey: "professionalId",
+  onDelete: "CASCADE",
+  hooks: true,
 });
 
 module.exports = BookingServiceModel;

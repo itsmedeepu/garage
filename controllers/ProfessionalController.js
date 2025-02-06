@@ -221,6 +221,21 @@ const verifyProf = async (req, res) => {
   );
 };
 
+const DeleteProf = async (req, res) => {
+  const profid = req.params.id;
+  if (!profid) {
+    return res.status(401).json({ message: "professional id is required" });
+  }
+
+  const findprof = await ProfessinalModel.findOne({ where: { id: profid } });
+  if (!findprof) {
+    return res.status(404).json({ message: "professinoal not found" });
+  }
+
+  findprof.destroy();
+  return res.status(201).json({ message: "professional delted sucessfully" });
+};
+
 module.exports = {
   ProfessRegister,
   FetchAllProfessinals,
@@ -229,4 +244,5 @@ module.exports = {
   GetProfById,
   verifyProf,
   Refresh,
+  DeleteProf,
 };
