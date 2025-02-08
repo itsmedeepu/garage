@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 
 // Option 3: Passing parameters separately (other dialects)
 const sequelize = new Sequelize(
-  "garage",
+  process.env.DATABASE_NAME,
   process.env.DATABASE_USERNAME,
   process.env.DATABASE_PASSWORD,
   {
