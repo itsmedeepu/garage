@@ -242,12 +242,12 @@ const OauthRegister = async (req, res) => {
   console.log(req.user);
 
   res.redirect(
-    "http://localhost:5173/garage/user/login/oauth?accesstoken=" +
-      req.user.accesstoken +
-      "&refreshtoken=" +
-      req.user.refreshtoken +
-      "&userid=" +
-      req.user.userid
+    `${process.env.FRONTEND_URL}/user/login/oauth?accesstoken=
+      ${req.user.accesstoken}
+      &refreshtoken=
+      ${req.user.refreshtoken}
+      &userid=
+      ${req.user.userid}`
   );
 };
 

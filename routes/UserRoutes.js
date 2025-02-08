@@ -39,7 +39,7 @@ router.get(
   "/oauth2/google/callback",
   passport.authenticate("google", {
     session: false,
-    failureRedirect: "http://localhost:5173/garage/user/login",
+    failureRedirect: `${process.env.FRONTEND_URL}/user/login`,
   }),
   OauthRegister
 );
