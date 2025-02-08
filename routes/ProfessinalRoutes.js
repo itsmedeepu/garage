@@ -7,6 +7,7 @@ const {
   GetProfById,
   Refresh,
   verifyProf,
+  ResetPassword,
 } = require("../controllers/ProfessionalController");
 const { ProfessinalAuth, AdminAuth } = require("../middlewares/Auth");
 
@@ -31,4 +32,6 @@ router.post("/auth", [ProfessinalAuth], verifyProf);
 router.get("/allusers", [ProfessinalAuth], FetchAllUsers);
 router.get("/bookingbyid/:bookingid", [ProfessinalAuth], getBookingsById);
 router.post("/changestatus", [ProfessinalAuth], ChangeStatus);
+router.post("/resetpassword", ResetPassword);
+
 module.exports = router;

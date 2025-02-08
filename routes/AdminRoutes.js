@@ -7,6 +7,7 @@ const {
   GetAdminById,
   Refresh,
   verifyAdmin,
+  ResetPassword,
 } = require("../controllers/AdminController");
 const { getAllBookings } = require("../controllers/BookingServiceController");
 const { AdminAuth } = require("../middlewares/Auth");
@@ -39,5 +40,6 @@ router.delete("/deleteuser/:id", [AdminAuth], DeleteUser);
 router.delete("/deleteprof/:id", [AdminAuth], DeleteProf);
 router.post("/profupdate", [AdminAuth], UpdateProfessinal);
 router.post("/addservice", [AdminAuth], addService);
+router.post("/resetpassword", ResetPassword);
 
 module.exports = router;

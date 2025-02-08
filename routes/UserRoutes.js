@@ -10,6 +10,7 @@ const {
   Refresh,
   DeleteUser,
   OauthRegister,
+  ResetPassword,
 } = require("../controllers/UserController");
 
 const { addBooking } = require("../controllers/BookingServiceController");
@@ -31,6 +32,8 @@ router.get(
   "/oauth2/google/sigin",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
+
+router.post("/resetpassword", ResetPassword);
 
 router.get(
   "/oauth2/google/callback",

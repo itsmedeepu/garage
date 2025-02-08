@@ -215,6 +215,39 @@ const verifyAdmin = async (req, res) => {
     }
   );
 };
+
+const ResetPassword = async (req, res) => {
+  const { email, password } = req.body;
+  if (!isValidObject(req.body)) {
+    return res.status(401).json({ message: "email is required" });
+  }
+
+  const findadmin = await AdminModel.findOne({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!findadmin) {
+    return res.status(404).json({ message: "admin not found with this email" });
+  }
+
+  const hashedpassword = await bcrypt.hash(password, 10);
+
+  const updateAdmin = await findadmin.update(
+    { password: hashedpassword },
+    {
+      where: {
+        email: email,
+      },
+    }
+  );
+  if (!updateAdmin) {
+    return res.status(404).json({ message: "admin not found with this email" });
+  }
+  return res.status(201).json({ message: "Admin password resetted" });
+};
+
 module.exports = {
   Register,
   FetchAllAdmins,
@@ -223,4 +256,5 @@ module.exports = {
   GetAdminById,
   verifyAdmin,
   Refresh,
+  ResetPassword,
 };

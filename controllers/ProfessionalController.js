@@ -236,6 +236,42 @@ const DeleteProf = async (req, res) => {
   return res.status(201).json({ message: "professional delted sucessfully" });
 };
 
+const ResetPassword = async (req, res) => {
+  const { email, password } = req.body;
+  if (!isValidObject(req.body)) {
+    return res.status(401).json({ message: "email is required" });
+  }
+
+  const findprof = await ProfessinalModel.findOne({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!findprof) {
+    return res
+      .status(404)
+      .json({ message: "professional not found with this email" });
+  }
+
+  const hashedpassword = await bcrypt.hash(password, 10);
+
+  const updateprof = await findprof.update(
+    { password: hashedpassword },
+    {
+      where: {
+        email: email,
+      },
+    }
+  );
+  if (!updateprof) {
+    return res
+      .status(404)
+      .json({ message: "professional not found with this email" });
+  }
+  return res.status(201).json({ message: "Professional password resetted" });
+};
+
 module.exports = {
   ProfessRegister,
   FetchAllProfessinals,
@@ -245,4 +281,5 @@ module.exports = {
   verifyProf,
   Refresh,
   DeleteProf,
+  ResetPassword,
 };

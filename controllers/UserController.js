@@ -251,6 +251,38 @@ const OauthRegister = async (req, res) => {
   );
 };
 
+const ResetPassword = async (req, res) => {
+  const { email, password } = req.body;
+  if (!isValidObject(req.body)) {
+    return res.status(401).json({ message: "email is required" });
+  }
+
+  const finduser = await UserModel.findOne({
+    where: {
+      email: email,
+    },
+  });
+
+  if (!finduser) {
+    return res.status(404).json({ message: "user not found with this email" });
+  }
+
+  const hashedpassword = await bcrypt.hash(password, 10);
+
+  const updateUser = await finduser.update(
+    { password: hashedpassword },
+    {
+      where: {
+        email: email,
+      },
+    }
+  );
+  if (!updateUser) {
+    return res.status(404).json({ message: "user not found with this email" });
+  }
+  return res.status(201).json({ message: "user password resetted" });
+};
+
 module.exports = {
   Register,
   FetchAllUsers,
@@ -261,4 +293,5 @@ module.exports = {
   verifyUser,
   DeleteUser,
   OauthRegister,
+  ResetPassword,
 };
