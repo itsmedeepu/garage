@@ -239,8 +239,6 @@ const DeleteUser = async (req, res) => {
 };
 
 const OauthRegister = async (req, res) => {
-  console.log(req.user);
-
   res.redirect(
     `${process.env.FRONTEND_URL}/user/login/oauth?` +
       `accesstoken=${encodeURIComponent(req.user.accesstoken)}` +
